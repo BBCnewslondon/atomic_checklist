@@ -22,7 +22,7 @@
     <header class="page-header">
         <div class="header-inner">
             <h1>Atomic Physics Checklist</h1>
-            <p class="lead">Track your mastery of the core quantum and atomic physics concepts with an orbit-inspired interface.</p>
+            <p class="lead">Track your mastery of the core quantum and atomic physics.</p>
         </div>
     </header>
     <main>
@@ -31,7 +31,19 @@
                 <div class="progress-summary" aria-live="polite">
                     Overall progress: <span id="overall-progress">0%</span>
                 </div>
+                <div class="timer-display">
+                    <span id="timer">00:00:00</span>
+                    <button id="timer-toggle" type="button">Start Study</button>
+                    <button id="timer-reset" type="button">Reset</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search topics..." aria-label="Search checklist items">
+                </div>
                 <div class="toolbar-actions">
+                    <button id="toggle-colors" type="button">Pause Colors</button>
+                    <button id="slower-colors" type="button">Slower</button>
+                    <button id="faster-colors" type="button">Faster</button>
+                    <button id="export-progress" type="button">Export</button>
                     <button id="reset-progress" type="button">Reset All</button>
                 </div>
             </div>
@@ -41,8 +53,10 @@
         </section>
     </main>
     <footer class="page-footer">
-        <small>Tip: Hover over equations or key ideas to highlight their theme lines.</small>
+        <small>Tip: Hover over equations or key ideas to highlight their theme lines. 
+        <br>Keyboard shortcuts: P (pause colors), S (start/pause timer), R (reset timer), / (search)</small>
     </footer>
+    <div class="particles" id="particles"></div>
     <script src="script.js"></script>
 </body>
 </html>

@@ -279,6 +279,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const overallProgressEl = document.getElementById("overall-progress");
     const resetButton = document.getElementById("reset-progress");
 
+    // Add event listener for search input
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            filterChecklistItems(e.target.value);
+        });
+    }
+
     if (!checklistContainer || !overallProgressEl || !resetButton) {
         return;
     }
@@ -401,6 +409,78 @@ document.addEventListener("DOMContentLoaded", () => {
         updateOverallProgress();
     });
 
+    const toggleButton = document.getElementById("toggle-colors");
+    if (toggleButton) {
+        toggleButton.addEventListener("click", () => {
+            isAnimating = !isAnimating;
+            toggleButton.textContent = isAnimating ? "Pause Colors" : "Resume Colors";
+            if (isAnimating) {
+                animateColors();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+    }
+
+    const slowerButton = document.getElementById("slower-colors");
+    if (slowerButton) {
+        slowerButton.addEventListener("click", () => {
+            shiftSpeed = Math.max(0.1, shiftSpeed - 0.1);
+        });
+    }
+
+    const fasterButton = document.getElementById("faster-colors");
+    if (fasterButton) {
+        fasterButton.addEventListener("click", () => {
+            shiftSpeed = Math.min(2.0, shiftSpeed + 0.1);
+        });
+    }
+
+    const exportButton = document.getElementById("export-progress");
+    if (exportButton) {
+        exportButton.addEventListener("click", () => {
+            const progress = {
+                date: new Date().toISOString(),
+                overall: parseInt(overallProgressEl.textContent),
+                chapters: chaptersMeta.map(meta => ({
+                    title: meta.slug,
+                    progress: parseInt(meta.percentEl.textContent),
+                    completed: meta.items.filter(item => item.checkbox.checked).length,
+                    total: meta.items.length
+                }))
+            };
+            
+            const dataStr = JSON.stringify(progress, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `atomic-checklist-progress-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    // Timer controls
+    const timerToggle = document.getElementById("timer-toggle");
+    if (timerToggle) {
+        timerToggle.addEventListener("click", () => {
+            if (timerInterval) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        });
+    }
+
+    const timerReset = document.getElementById("timer-reset");
+    if (timerReset) {
+        timerReset.addEventListener("click", resetTimer);
+    }
+
     function updateOverallProgress() {
         const totals = chaptersMeta.reduce((acc, meta) => {
             const checked = meta.items.filter(({ checkbox }) => checkbox.checked).length;
@@ -421,6 +501,16 @@ document.addEventListener("DOMContentLoaded", () => {
         meta.fillEl.style.width = `${percent}%`;
         meta.percentEl.textContent = `${percent}%`;
         meta.countEl.textContent = `${checked} of ${total} complete`;
+        
+        // Achievement system
+        const chapterCard = meta.fillEl.closest('.chapter-card');
+        const isCompleted = percent === 100;
+        chapterCard.setAttribute('data-completed', isCompleted);
+        
+        if (isCompleted && !chapterCard.hasAttribute('data-celebrated')) {
+            chapterCard.setAttribute('data-celebrated', 'true');
+            // Could add celebration animation here
+        }
     }
 
     function handleToggle(meta, entry) {
@@ -440,7 +530,83 @@ document.addEventListener("DOMContentLoaded", () => {
             entry.checkbox.addEventListener("change", () => handleToggle(meta, entry));
         });
     });
+
+    // Start color animation
+    animateColors();
+    
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+        // Don't trigger shortcuts when typing in inputs
+        if (e.target.tagName === "INPUT") return;
+        
+        switch(e.key.toLowerCase()) {
+            case "p":
+                e.preventDefault();
+                document.getElementById("toggle-colors")?.click();
+                break;
+            case "s":
+                e.preventDefault();
+                document.getElementById("timer-toggle")?.click();
+                break;
+            case "r":
+                e.preventDefault();
+                document.getElementById("timer-reset")?.click();
+                break;
+            case "/":
+                e.preventDefault();
+                document.getElementById("search-input")?.focus();
+                break;
+        }
+    });
+
+    // (Duplicate search input event listener removed)
 });
+
+function filterChecklistItems(query) {
+    const allItems = document.querySelectorAll(".check-item-wrapper");
+    const allSections = document.querySelectorAll(".check-section");
+    const allChapters = document.querySelectorAll(".chapter-card");
+    
+    // Trim and prepare query
+    query = query.trim().toLowerCase();
+    
+    if (!query) {
+        // Show all items, sections, and chapters
+        allItems.forEach(item => item.style.display = "");
+        allSections.forEach(section => section.style.display = "");
+        allChapters.forEach(chapter => chapter.style.display = "");
+        return;
+    }
+    
+    // Hide all items initially
+    allItems.forEach(item => item.style.display = "none");
+    allSections.forEach(section => section.style.display = "none");
+    allChapters.forEach(chapter => chapter.style.display = "none");
+    
+    // Find matching items and show them
+    allItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+            item.style.display = "";
+        }
+    });
+    
+    // Show sections that have visible items
+    allSections.forEach(section => {
+        const visibleItems = section.querySelectorAll('.check-item-wrapper[style=""]');
+        if (visibleItems.length > 0) {
+            section.style.display = "";
+        }
+    });
+    
+    // Show chapters that have visible sections
+    allChapters.forEach(chapter => {
+        const visibleSections = chapter.querySelectorAll('.check-section[style=""]');
+        if (visibleSections.length > 0) {
+            chapter.style.display = "";
+        }
+    });
+}
 
 function createChecklistItem({ chapterSlug, sectionTitle, item, state }) {
     const key = [chapterSlug, slugify(sectionTitle), slugify(item.label || item.detail || item.text)].join("::");
@@ -640,3 +806,86 @@ function clearState() {
 function stateKeys(state) {
     return Object.keys(state || {});
 }
+
+// Color shifting for Tron effect
+let hue = 240; // starting with blue
+const tronHues = [240, 180, 120, 60, 0, 300]; // blue, cyan, green, yellow, red, magenta
+let hueIndex = 0;
+let isAnimating = true;
+let animationId = null;
+let shiftSpeed = 0.5; // degrees per frame
+
+let timerInterval = null;
+let startTime = null;
+let elapsedTime = 0;
+
+function animateColors() {
+    if (!isAnimating) return;
+    
+    hue = (hue + shiftSpeed) % 360;
+    document.documentElement.style.setProperty('--hue', hue);
+    
+    animationId = requestAnimationFrame(animateColors);
+}
+
+function updateTimer() {
+    const now = Date.now();
+    const diff = elapsedTime + (timerInterval ? now - startTime : 0);
+    
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    const timerEl = document.getElementById("timer");
+    if (timerEl) {
+        timerEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+}
+
+function startTimer() {
+    if (!timerInterval) {
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+        const toggleBtn = document.getElementById("timer-toggle");
+        if (toggleBtn) toggleBtn.textContent = "Pause Study";
+    }
+}
+
+function pauseTimer() {
+    if (timerInterval) {
+        elapsedTime += Date.now() - startTime;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        const toggleBtn = document.getElementById("timer-toggle");
+        if (toggleBtn) toggleBtn.textContent = "Resume Study";
+    }
+}
+
+function resetTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    elapsedTime = 0;
+    startTime = null;
+    updateTimer();
+    const toggleBtn = document.getElementById("timer-toggle");
+    if (toggleBtn) toggleBtn.textContent = "Start Study";
+}
+
+// Start animation after DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+    animateColors();
+    
+    // Create particles
+    const particlesContainer = document.getElementById("particles");
+    if (particlesContainer) {
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.left = Math.random() * 100 + "%";
+            particle.style.animationDelay = Math.random() * 8 + "s";
+            particlesContainer.appendChild(particle);
+        }
+    }
+});
