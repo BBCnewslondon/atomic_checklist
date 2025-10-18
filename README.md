@@ -1,6 +1,6 @@
 # Atomic Physics Checklist
 
-An orbit-inspired web checklist that captures key concepts, derivations, and equations from an atomic physics lecture module.
+A web checklist that captures key concepts, derivations, and equations from my atomic physics lecture module.
 
 ## Features
 
