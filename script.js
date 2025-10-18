@@ -640,3 +640,13 @@ function clearState() {
 function stateKeys(state) {
     return Object.keys(state || {});
 }
+
+// Color shifting for Tron effect
+let hue = 197; // starting hue
+const hueStep = 0.5; // degrees per frame
+const interval = 100; // ms per frame, for slow shift
+
+setInterval(() => {
+    hue = (hue + hueStep) % 360;
+    document.documentElement.style.setProperty('--hue', hue);
+}, interval);

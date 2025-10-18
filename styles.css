@@ -2,10 +2,23 @@
     --background: #060f1d;
     --surface: rgba(15, 33, 58, 0.85);
     --surface-strong: rgba(20, 42, 74, 0.95);
-    --accent: #49c7ff;
-    --accent-soft: rgba(73, 199, 255, 0.18);
-    --accent-strong: rgba(73, 199, 255, 0.4);
-    --ion-trail: rgba(255, 120, 196, 0.35);
+    --hue: 197;
+    --accent: hsl(var(--hue), 100%, 62%);
+    --accent-08: hsla(var(--hue), 100%, 62%, 0.08);
+    --accent-12: hsla(var(--hue), 100%, 62%, 0.12);
+    --accent-soft: hsla(var(--hue), 100%, 62%, 0.18);
+    --accent-20: hsla(var(--hue), 100%, 62%, 0.2);
+    --accent-22: hsla(var(--hue), 100%, 62%, 0.22);
+    --accent-25: hsla(var(--hue), 100%, 62%, 0.25);
+    --accent-strong: hsla(var(--hue), 100%, 62%, 0.4);
+    --accent-45: hsla(var(--hue), 100%, 62%, 0.45);
+    --accent-50: hsla(var(--hue), 100%, 62%, 0.5);
+    --accent-60: hsla(var(--hue), 100%, 62%, 0.6);
+    --accent-75: hsla(var(--hue), 100%, 62%, 0.75);
+    --ion-trail: hsla(calc(var(--hue) + 120), 100%, 70%, 0.35);
+    --ion-12: hsla(calc(var(--hue) + 120), 100%, 70%, 0.12);
+    --ion-trail-soft: hsla(calc(var(--hue) + 120), 100%, 70%, 0.15);
+    --ion-50: hsla(calc(var(--hue) + 120), 100%, 70%, 0.5);
     --text-primary: #f4fbff;
     --text-secondary: #9db7d1;
     --shadow: rgba(3, 8, 16, 0.55);
@@ -22,9 +35,9 @@ body {
     color: var(--text-primary);
     background-color: var(--background);
     background-image:
-        radial-gradient(circle at 20% 20%, rgba(73, 199, 255, 0.18), transparent 60%),
-        radial-gradient(circle at 80% 30%, rgba(255, 120, 196, 0.15), transparent 65%),
-        radial-gradient(circle at 50% 80%, rgba(73, 199, 255, 0.12), transparent 60%);
+        radial-gradient(circle at 20% 20%, var(--accent-soft), transparent 60%),
+        radial-gradient(circle at 80% 30%, var(--ion-trail-soft), transparent 65%),
+        radial-gradient(circle at 50% 80%, var(--accent-soft), transparent 60%);
     position: relative;
     overflow-x: hidden;
 }
@@ -44,13 +57,13 @@ body::after {
 body::before {
     top: -20vmax;
     left: 5vmax;
-    box-shadow: 0 0 120px rgba(73, 199, 255, 0.18);
+    box-shadow: 0 0 120px var(--accent-soft);
 }
 
 body::after {
     bottom: -25vmax;
     right: -10vmax;
-    border-color: rgba(255, 120, 196, 0.15);
+    border-color: var(--ion-trail-soft);
 }
 
 .page-header {
@@ -119,8 +132,8 @@ main {
 }
 
 .toolbar-actions button {
-    background: linear-gradient(135deg, rgba(73, 199, 255, 0.35), rgba(73, 199, 255, 0.15));
-    border: 1px solid rgba(73, 199, 255, 0.45);
+    background: linear-gradient(135deg, var(--accent-strong), var(--accent-soft));
+    border: 1px solid var(--accent-border);
     border-radius: 999px;
     color: var(--text-primary);
     padding: 0.55rem 1.4rem;
@@ -132,7 +145,7 @@ main {
 
 .toolbar-actions button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(73, 199, 255, 0.25);
+    box-shadow: 0 10px 24px var(--accent-strong);
 }
 
 .toolbar-actions button:focus-visible {
@@ -152,7 +165,7 @@ main {
     background: var(--surface-strong);
     border-radius: 24px;
     padding: 2.25rem;
-    border: 1px solid rgba(73, 199, 255, 0.22);
+    border: 1px solid var(--accent-very-soft);
     box-shadow: 0 24px 58px var(--shadow);
     overflow: hidden;
 }
@@ -169,7 +182,7 @@ main {
 .chapter-card::before {
     width: 260px;
     height: 260px;
-    border: 1px dashed rgba(73, 199, 255, 0.2);
+    border: 1px dashed var(--accent-soft);
     top: -120px;
     right: -70px;
 }
@@ -177,7 +190,7 @@ main {
 .chapter-card::after {
     width: 420px;
     height: 420px;
-    border: 1px solid rgba(255, 120, 196, 0.12);
+    border: 1px solid var(--ion-trail-soft);
     bottom: -240px;
     left: -100px;
 }
@@ -238,17 +251,17 @@ main {
 .progress-bar {
     margin-top: 1.2rem;
     height: 12px;
-    background: rgba(73, 199, 255, 0.12);
+    background: var(--accent-12);
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(73, 199, 255, 0.25);
+    border: 1px solid var(--accent-25);
 }
 
 .progress-bar-fill {
     width: 0;
     height: 100%;
-    background: linear-gradient(90deg, rgba(73, 199, 255, 0.6), rgba(255, 120, 196, 0.5));
-    box-shadow: 0 0 16px rgba(73, 199, 255, 0.4);
+    background: linear-gradient(90deg, var(--accent-60), var(--ion-50));
+    box-shadow: 0 0 16px var(--accent-strong);
     transition: width 0.25s ease;
 }
 
@@ -262,7 +275,7 @@ main {
     padding: 1.5rem;
     border-radius: 18px;
     background: rgba(8, 18, 34, 0.55);
-    border: 1px solid rgba(73, 199, 255, 0.18);
+    border: 1px solid var(--accent-soft);
 }
 
 .section-title {
@@ -288,13 +301,13 @@ main {
 }
 
 .check-item-wrapper:hover {
-    background: rgba(73, 199, 255, 0.08);
+    background: var(--accent-08);
     transform: translateX(4px);
 }
 
 .check-item-wrapper[data-checked="true"] {
-    background: rgba(73, 199, 255, 0.12);
-    border: 1px solid rgba(73, 199, 255, 0.22);
+    background: var(--accent-12);
+    border: 1px solid var(--accent-22);
 }
 
 .check-item {
@@ -317,7 +330,7 @@ main {
 }
 
 .check-item input[type="checkbox"]:hover {
-    border-color: rgba(73, 199, 255, 0.75);
+    border-color: var(--accent-75);
 }
 
 .check-item input[type="checkbox"]:checked {
@@ -353,8 +366,8 @@ main {
     font-size: 0.92rem;
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-    background: rgba(73, 199, 255, 0.12);
-    border: 1px solid rgba(73, 199, 255, 0.2);
+    background: var(--accent-12);
+    border: 1px solid var(--accent-20);
     color: var(--text-primary);
 }
 
