@@ -279,6 +279,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const overallProgressEl = document.getElementById("overall-progress");
     const resetButton = document.getElementById("reset-progress");
 
+    // Add event listener for search input
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            filterChecklistItems(e.target.value);
+        });
+    }
+
     if (!checklistContainer || !overallProgressEl || !resetButton) {
         return;
     }
@@ -550,52 +558,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
         }
     });
+
+    // (Duplicate search input event listener removed)
 });
 
 function filterChecklistItems(query) {
     const allItems = document.querySelectorAll(".check-item-wrapper");
+    const allSections = document.querySelectorAll(".check-section");
+    const allChapters = document.querySelectorAll(".chapter-card");
+    
+    // Trim and prepare query
+    query = query.trim().toLowerCase();
     
     if (!query) {
-        // Show all items
-        allItems.forEach(item => {
-            item.style.display = "";
-            item.closest(".check-section").style.display = "";
-            item.closest(".chapter-card").style.display = "";
-        });
+        // Show all items, sections, and chapters
+        allItems.forEach(item => item.style.display = "");
+        allSections.forEach(section => section.style.display = "");
+        allChapters.forEach(chapter => chapter.style.display = "");
         return;
     }
     
-    let visibleChapters = 0;
-    let visibleSections = 0;
+    // Hide all items initially
+    allItems.forEach(item => item.style.display = "none");
+    allSections.forEach(section => section.style.display = "none");
+    allChapters.forEach(chapter => chapter.style.display = "none");
     
-    // First pass: check which items match
+    // Find matching items and show them
     allItems.forEach(item => {
         const text = item.textContent.toLowerCase();
-        const matches = text.includes(query);
-        item.style.display = matches ? "" : "none";
-        
-        // Count visible items in this section
-        const section = item.closest(".check-section");
-        const sectionItems = section.querySelectorAll(".check-item-wrapper");
-        const visibleItems = section.querySelectorAll('.check-item-wrapper[style=""], .check-item-wrapper:not([style*="none"])');
-        
+        if (text.includes(query)) {
+            item.style.display = "";
+        }
+    });
+    
+    // Show sections that have visible items
+    allSections.forEach(section => {
+        const visibleItems = section.querySelectorAll('.check-item-wrapper[style=""]');
         if (visibleItems.length > 0) {
             section.style.display = "";
-            visibleSections++;
-        } else {
-            section.style.display = "none";
         }
-        
-        // Check chapter visibility
-        const chapter = item.closest(".chapter-card");
-        const chapterSections = chapter.querySelectorAll(".check-section");
-        const visibleChapterSections = chapter.querySelectorAll('.check-section[style=""], .check-section:not([style*="none"])');
-        
-        if (visibleChapterSections.length > 0) {
+    });
+    
+    // Show chapters that have visible sections
+    allChapters.forEach(chapter => {
+        const visibleSections = chapter.querySelectorAll('.check-section[style=""]');
+        if (visibleSections.length > 0) {
             chapter.style.display = "";
-            visibleChapters++;
-        } else {
-            chapter.style.display = "none";
         }
     });
 }
@@ -807,7 +815,6 @@ let isAnimating = true;
 let animationId = null;
 let shiftSpeed = 0.5; // degrees per frame
 
-// Study timer
 let timerInterval = null;
 let startTime = null;
 let elapsedTime = 0;

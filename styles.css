@@ -237,7 +237,7 @@ main {
 
 .toolbar-actions button {
     background: linear-gradient(135deg, var(--accent-strong), var(--accent-soft));
-    border: 1px solid var(--accent-border);
+    border: 1px solid var(--accent-45);
     border-radius: 999px;
     color: var(--text-primary);
     padding: 0.55rem 1.4rem;
@@ -269,13 +269,14 @@ main {
     background: var(--surface-strong);
     border-radius: 24px;
     padding: 2.25rem;
-    border: 1px solid var(--accent-very-soft);
+    border: 1px solid var(--accent-22);
     box-shadow: 0 24px 58px var(--shadow);
     overflow: hidden;
     animation: tronGlow 6s ease-in-out infinite;
+    will-change: box-shadow;
 }
 
-.chapter-card::after {
+.chapter-card-completion {
     content: "★";
     position: absolute;
     top: 1rem;
@@ -285,9 +286,10 @@ main {
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 2;
+    pointer-events: none;
 }
 
-.chapter-card[data-completed="true"]::after {
+.chapter-card[data-completed="true"] .chapter-card-completion {
     opacity: 1;
     animation: achievementGlow 2s ease-in-out;
 }
