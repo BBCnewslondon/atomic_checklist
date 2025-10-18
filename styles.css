@@ -26,6 +26,15 @@
     --shadow: rgba(3, 8, 16, 0.55);
 }
 
+@keyframes tronGlow {
+    0%, 100% {
+        box-shadow: 0 24px 58px var(--shadow), 0 0 20px hsla(var(--hue), 100%, 62%, 0.1);
+    }
+    50% {
+        box-shadow: 0 24px 58px var(--shadow), 0 0 30px hsla(var(--hue), 100%, 62%, 0.2);
+    }
+}
+
 * {
     box-sizing: border-box;
 }
@@ -66,6 +75,60 @@ body::after {
     bottom: -25vmax;
     right: -10vmax;
     border-color: var(--ion-trail-soft);
+}
+
+/* Particle effects */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: hsla(var(--hue), 100%, 62%, 0.6);
+    border-radius: 50%;
+    animation: float 8s linear infinite;
+}
+
+.particle:nth-child(2n) {
+    animation-duration: 10s;
+    animation-delay: -2s;
+}
+
+.particle:nth-child(3n) {
+    animation-duration: 12s;
+    animation-delay: -4s;
+}
+
+.particle:nth-child(4n) {
+    width: 2px;
+    height: 2px;
+    animation-duration: 6s;
+    animation-delay: -1s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 .page-header {
@@ -170,6 +233,7 @@ main {
     border: 1px solid var(--accent-very-soft);
     box-shadow: 0 24px 58px var(--shadow);
     overflow: hidden;
+    animation: tronGlow 6s ease-in-out infinite;
 }
 
 .chapter-card::before,

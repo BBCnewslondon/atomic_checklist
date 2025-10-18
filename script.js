@@ -401,6 +401,33 @@ document.addEventListener("DOMContentLoaded", () => {
         updateOverallProgress();
     });
 
+    const toggleButton = document.getElementById("toggle-colors");
+    if (toggleButton) {
+        toggleButton.addEventListener("click", () => {
+            isAnimating = !isAnimating;
+            toggleButton.textContent = isAnimating ? "Pause Colors" : "Resume Colors";
+            if (isAnimating) {
+                animateColors();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+    }
+
+    const slowerButton = document.getElementById("slower-colors");
+    if (slowerButton) {
+        slowerButton.addEventListener("click", () => {
+            shiftSpeed = Math.max(0.1, shiftSpeed - 0.1);
+        });
+    }
+
+    const fasterButton = document.getElementById("faster-colors");
+    if (fasterButton) {
+        fasterButton.addEventListener("click", () => {
+            shiftSpeed = Math.min(2.0, shiftSpeed + 0.1);
+        });
+    }
+
     function updateOverallProgress() {
         const totals = chaptersMeta.reduce((acc, meta) => {
             const checked = meta.items.filter(({ checkbox }) => checkbox.checked).length;
@@ -440,6 +467,9 @@ document.addEventListener("DOMContentLoaded", () => {
             entry.checkbox.addEventListener("change", () => handleToggle(meta, entry));
         });
     });
+
+    // Start color animation
+    animateColors();
 });
 
 function createChecklistItem({ chapterSlug, sectionTitle, item, state }) {
@@ -642,11 +672,35 @@ function stateKeys(state) {
 }
 
 // Color shifting for Tron effect
-let hue = 197; // starting hue
-const hueStep = 0.5; // degrees per frame
-const interval = 100; // ms per frame, for slow shift
+let hue = 240; // starting with blue
+const tronHues = [240, 180, 120, 60, 0, 300]; // blue, cyan, green, yellow, red, magenta
+let hueIndex = 0;
+let isAnimating = true;
+let animationId = null;
+let shiftSpeed = 0.5; // degrees per frame
 
-setInterval(() => {
-    hue = (hue + hueStep) % 360;
+function animateColors() {
+    if (!isAnimating) return;
+    
+    hue = (hue + shiftSpeed) % 360;
     document.documentElement.style.setProperty('--hue', hue);
-}, interval);
+    
+    animationId = requestAnimationFrame(animateColors);
+}
+
+// Start animation after DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+    animateColors();
+    
+    // Create particles
+    const particlesContainer = document.getElementById("particles");
+    if (particlesContainer) {
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.left = Math.random() * 100 + "%";
+            particle.style.animationDelay = Math.random() * 8 + "s";
+            particlesContainer.appendChild(particle);
+        }
+    }
+});
