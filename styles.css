@@ -5,9 +5,14 @@
     --accent: #49c7ff;
     --accent-soft: rgba(73, 199, 255, 0.18);
     --accent-strong: rgba(73, 199, 255, 0.4);
+    --accent-hot: #ff8af4;
+    --accent-cool: #78f9ff;
     --ion-trail: rgba(255, 120, 196, 0.35);
     --text-primary: #f4fbff;
     --text-secondary: #9db7d1;
+    --glow-strong: rgba(120, 249, 255, 0.45);
+    --glow-hot: rgba(255, 138, 244, 0.4);
+    --glow-cool: rgba(73, 199, 255, 0.55);
     --shadow: rgba(3, 8, 16, 0.55);
 }
 
@@ -22,11 +27,13 @@ body {
     color: var(--text-primary);
     background-color: var(--background);
     background-image:
-        radial-gradient(circle at 20% 20%, rgba(73, 199, 255, 0.18), transparent 60%),
-        radial-gradient(circle at 80% 30%, rgba(255, 120, 196, 0.15), transparent 65%),
-        radial-gradient(circle at 50% 80%, rgba(73, 199, 255, 0.12), transparent 60%);
+        radial-gradient(circle at 12% 18%, rgba(120, 249, 255, 0.25), transparent 55%),
+        radial-gradient(circle at 78% 24%, rgba(255, 138, 244, 0.26), transparent 62%),
+        radial-gradient(circle at 50% 82%, rgba(73, 199, 255, 0.18), transparent 65%),
+        linear-gradient(180deg, rgba(6, 15, 29, 0.75), rgba(6, 15, 29, 0.95));
     position: relative;
     overflow-x: hidden;
+    background-attachment: fixed;
 }
 
 body::before,
@@ -39,18 +46,22 @@ body::after {
     border: 1px solid rgba(73, 199, 255, 0.12);
     z-index: 0;
     pointer-events: none;
+    filter: blur(0.5px);
 }
 
 body::before {
     top: -20vmax;
     left: 5vmax;
-    box-shadow: 0 0 120px rgba(73, 199, 255, 0.18);
+    box-shadow: 0 0 160px var(--glow-cool), 0 0 240px rgba(73, 199, 255, 0.18);
+    animation: float-glow 18s ease-in-out infinite alternate;
 }
 
 body::after {
     bottom: -25vmax;
     right: -10vmax;
-    border-color: rgba(255, 120, 196, 0.15);
+    border-color: rgba(255, 120, 196, 0.2);
+    box-shadow: 0 0 180px var(--glow-hot), 0 0 220px rgba(255, 120, 196, 0.18);
+    animation: float-glow 22s ease-in-out infinite alternate-reverse;
 }
 
 .page-header {
@@ -78,6 +89,7 @@ h1 {
     font-size: clamp(2.4rem, 4.5vw, 3.4rem);
     letter-spacing: 0.2rem;
     text-transform: uppercase;
+    text-shadow: 0 0 24px var(--glow-cool), 0 0 6px rgba(255, 255, 255, 0.35);
 }
 
 .lead {
@@ -85,6 +97,7 @@ h1 {
     max-width: 560px;
     color: var(--text-secondary);
     font-size: 1.05rem;
+    text-shadow: 0 0 12px rgba(73, 199, 255, 0.35);
 }
 
 main {
@@ -95,14 +108,39 @@ main {
     z-index: 1;
 }
 
+main::before {
+    content: "";
+    position: absolute;
+    inset: -6rem -20vw -8rem;
+    background:
+        radial-gradient(circle at 40% 20%, rgba(120, 249, 255, 0.18), transparent 55%),
+        radial-gradient(circle at 70% 80%, rgba(255, 138, 244, 0.24), transparent 60%);
+    filter: blur(60px);
+    opacity: 0.6;
+    z-index: -1;
+}
+
 .toolbar {
+    position: relative;
     background-color: var(--surface);
     border: 1px solid var(--accent-soft);
     border-radius: 18px;
     padding: 1.5rem;
-    box-shadow: 0 18px 45px var(--shadow);
+    box-shadow: 0 22px 68px var(--shadow), 0 0 36px rgba(73, 199, 255, 0.18);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
+    overflow: hidden;
+}
+
+.toolbar::before {
+    content: "";
+    position: absolute;
+    inset: -40% -25%;
+    background: radial-gradient(circle at 50% 50%, rgba(120, 249, 255, 0.35), transparent 60%);
+    filter: blur(48px);
+    opacity: 0.5;
+    z-index: -1;
+    animation: aurora-shift 12s linear infinite alternate;
 }
 
 .toolbar-content {
@@ -116,6 +154,7 @@ main {
 .progress-summary {
     font-weight: 600;
     letter-spacing: 0.05em;
+    text-shadow: 0 0 14px rgba(73, 199, 255, 0.45);
 }
 
 .toolbar-actions button {
@@ -127,12 +166,15 @@ main {
     font-size: 0.95rem;
     letter-spacing: 0.05em;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-shadow: 0 0 10px var(--glow-cool);
+    box-shadow: 0 0 24px rgba(73, 199, 255, 0.35), 0 0 8px rgba(73, 199, 255, 0.45);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .toolbar-actions button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(73, 199, 255, 0.25);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 16px 36px rgba(73, 199, 255, 0.35), 0 0 26px rgba(255, 138, 244, 0.35);
+    filter: brightness(1.08);
 }
 
 .toolbar-actions button:focus-visible {
@@ -152,9 +194,17 @@ main {
     background: var(--surface-strong);
     border-radius: 24px;
     padding: 2.25rem;
-    border: 1px solid rgba(73, 199, 255, 0.22);
-    box-shadow: 0 24px 58px var(--shadow);
+    border: 1px solid rgba(73, 199, 255, 0.28);
+    box-shadow: 0 28px 72px var(--shadow), 0 0 52px rgba(73, 199, 255, 0.18);
     overflow: hidden;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chapter-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 32px 84px var(--shadow), 0 0 82px rgba(73, 199, 255, 0.22);
 }
 
 .chapter-card::before,
@@ -164,6 +214,7 @@ main {
     border-radius: 50%;
     pointer-events: none;
     opacity: 0.65;
+    filter: blur(0.5px);
 }
 
 .chapter-card::before {
@@ -172,14 +223,18 @@ main {
     border: 1px dashed rgba(73, 199, 255, 0.2);
     top: -120px;
     right: -70px;
+    box-shadow: 0 0 65px var(--glow-cool);
+    animation: slow-spin 28s linear infinite;
 }
 
 .chapter-card::after {
     width: 420px;
     height: 420px;
-    border: 1px solid rgba(255, 120, 196, 0.12);
+    border: 1px solid rgba(255, 120, 196, 0.18);
     bottom: -240px;
     left: -100px;
+    box-shadow: 0 0 90px var(--glow-hot);
+    animation: slow-spin 36s linear infinite reverse;
 }
 
 .chapter-content {
@@ -206,12 +261,14 @@ main {
     margin: 0;
     font-size: clamp(1.65rem, 3vw, 2rem);
     letter-spacing: 0.08em;
+    text-shadow: 0 0 18px rgba(73, 199, 255, 0.3);
 }
 
 .chapter-meta {
     color: var(--text-secondary);
     font-size: 0.95rem;
     letter-spacing: 0.03em;
+    text-shadow: 0 0 14px rgba(120, 249, 255, 0.18);
 }
 
 .chapter-progress {
@@ -228,11 +285,13 @@ main {
     font-weight: 600;
     letter-spacing: 0.06em;
     color: var(--accent);
+    text-shadow: 0 0 18px rgba(73, 199, 255, 0.42);
 }
 
 .chapter-progress-count {
     font-size: 0.9rem;
     color: var(--text-secondary);
+    text-shadow: 0 0 10px rgba(255, 138, 244, 0.22);
 }
 
 .progress-bar {
@@ -242,6 +301,7 @@ main {
     border-radius: 999px;
     overflow: hidden;
     border: 1px solid rgba(73, 199, 255, 0.25);
+    box-shadow: 0 0 18px rgba(73, 199, 255, 0.18);
 }
 
 .progress-bar-fill {
@@ -250,6 +310,7 @@ main {
     background: linear-gradient(90deg, rgba(73, 199, 255, 0.6), rgba(255, 120, 196, 0.5));
     box-shadow: 0 0 16px rgba(73, 199, 255, 0.4);
     transition: width 0.25s ease;
+    animation: progress-pulse 3.5s ease-in-out infinite;
 }
 
 .chapter-sections {
@@ -259,10 +320,34 @@ main {
 }
 
 .check-section {
+    position: relative;
     padding: 1.5rem;
     border-radius: 18px;
     background: rgba(8, 18, 34, 0.55);
     border: 1px solid rgba(73, 199, 255, 0.18);
+    box-shadow: 0 16px 48px rgba(3, 8, 16, 0.55), 0 0 32px rgba(73, 199, 255, 0.12);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.check-section::before {
+    content: "";
+    position: absolute;
+    inset: -40% -20% 40% -20%;
+    background: linear-gradient(120deg, rgba(73, 199, 255, 0.16), rgba(255, 138, 244, 0.18));
+    opacity: 0.35;
+    filter: blur(48px);
+    z-index: 0;
+    transition: opacity 0.3s ease;
+}
+
+.check-section:hover::before {
+    opacity: 0.55;
+}
+
+.check-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 56px rgba(3, 8, 16, 0.6), 0 0 40px rgba(73, 199, 255, 0.18);
 }
 
 .section-title {
@@ -271,11 +356,16 @@ main {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--accent);
+    text-shadow: 0 0 18px rgba(73, 199, 255, 0.4);
+    position: relative;
+    z-index: 1;
 }
 
 .checklist-items {
     display: grid;
     gap: 0.85rem;
+    position: relative;
+    z-index: 1;
 }
 
 .check-item-wrapper {
@@ -284,17 +374,37 @@ main {
     padding: 0.65rem 0.85rem;
     border-radius: 12px;
     border: 1px solid transparent;
-    transition: background-color 0.2s ease, transform 0.2s ease, border 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, border 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .check-item-wrapper:hover {
-    background: rgba(73, 199, 255, 0.08);
-    transform: translateX(4px);
+    background: rgba(73, 199, 255, 0.12);
+    transform: translateX(6px);
+    box-shadow: 0 0 28px rgba(73, 199, 255, 0.18);
 }
 
 .check-item-wrapper[data-checked="true"] {
     background: rgba(73, 199, 255, 0.12);
-    border: 1px solid rgba(73, 199, 255, 0.22);
+    border: 1px solid rgba(73, 199, 255, 0.28);
+    box-shadow: 0 0 32px rgba(73, 199, 255, 0.25);
+}
+
+.check-item-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: -50% -20%;
+    background: radial-gradient(circle at 50% 50%, rgba(120, 249, 255, 0.32), transparent 65%);
+    opacity: 0;
+    filter: blur(38px);
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.check-item-wrapper:hover::before,
+.check-item-wrapper[data-checked="true"]::before {
+    opacity: 0.75;
 }
 
 .check-item {
@@ -302,6 +412,8 @@ main {
     grid-template-columns: auto 1fr;
     gap: 0.75rem;
     align-items: flex-start;
+    position: relative;
+    z-index: 1;
 }
 
 .check-item input[type="checkbox"] {
@@ -345,6 +457,7 @@ main {
 .check-item span strong {
     color: var(--accent);
     letter-spacing: 0.04em;
+    text-shadow: 0 0 14px rgba(73, 199, 255, 0.5);
 }
 
 .equation {
@@ -353,9 +466,10 @@ main {
     font-size: 0.92rem;
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-    background: rgba(73, 199, 255, 0.12);
-    border: 1px solid rgba(73, 199, 255, 0.2);
+    background: linear-gradient(135deg, rgba(73, 199, 255, 0.12), rgba(255, 138, 244, 0.12));
+    border: 1px solid rgba(73, 199, 255, 0.28);
     color: var(--text-primary);
+    box-shadow: 0 0 18px rgba(73, 199, 255, 0.22);
 }
 
 .equation-display {
@@ -363,9 +477,11 @@ main {
     padding: 0.45rem 0.6rem;
     text-align: center;
     font-size: 1rem;
+    box-shadow: 0 0 22px rgba(73, 199, 255, 0.26);
 }
 
 .derivation-details {
+    position: relative;
     background: rgba(73, 199, 255, 0.06);
     border: 1px solid rgba(73, 199, 255, 0.18);
     border-radius: 12px;
@@ -374,14 +490,29 @@ main {
     color: var(--text-secondary);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
+    box-shadow: inset 0 0 18px rgba(73, 199, 255, 0.12), 0 0 24px rgba(73, 199, 255, 0.16);
+    overflow: hidden;
+}
+
+.derivation-details::before {
+    content: "";
+    position: absolute;
+    inset: -20% -40% 20% -40%;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 138, 244, 0.25), transparent 65%);
+    opacity: 0.4;
+    filter: blur(42px);
+    z-index: 0;
 }
 
 .derivation-details summary {
+    position: relative;
+    z-index: 1;
     cursor: pointer;
     color: var(--accent);
     font-weight: 600;
     letter-spacing: 0.05em;
     list-style: none;
+    text-shadow: 0 0 14px rgba(73, 199, 255, 0.5);
 }
 
 .derivation-details summary::marker,
@@ -405,22 +536,29 @@ main {
     display: grid;
     gap: 0.75rem;
     color: var(--text-primary);
+    position: relative;
+    z-index: 1;
 }
 
 .derivation-heading {
+    position: relative;
     margin: 0;
     font-size: 1rem;
     letter-spacing: 0.04em;
     color: var(--accent);
+    text-shadow: 0 0 12px rgba(73, 199, 255, 0.45);
 }
 
 .derivation-text {
     margin: 0;
-    line-height: 1.6;
+    position: relative;
+    z-index: 1;
 }
 
 .derivation-equation {
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .derivation-list {
@@ -428,6 +566,8 @@ main {
     padding-left: 1.2rem;
     display: grid;
     gap: 0.45rem;
+    position: relative;
+    z-index: 1;
 }
 
 .derivation-list li {
