@@ -19,6 +19,8 @@
     --ion-12: hsla(calc(var(--hue) + 120), 100%, 70%, 0.12);
     --ion-trail-soft: hsla(calc(var(--hue) + 120), 100%, 70%, 0.15);
     --ion-50: hsla(calc(var(--hue) + 120), 100%, 70%, 0.5);
+    --equation-bg: rgba(73, 199, 255, 0.12);
+    --equation-border: rgba(73, 199, 255, 0.2);
     --text-primary: #f4fbff;
     --text-secondary: #9db7d1;
     --shadow: rgba(3, 8, 16, 0.55);
@@ -366,8 +368,8 @@ main {
     font-size: 0.92rem;
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-    background: var(--accent-12);
-    border: 1px solid var(--accent-20);
+    background: var(--equation-bg);
+    border: 1px solid var(--equation-border);
     color: var(--text-primary);
 }
 
