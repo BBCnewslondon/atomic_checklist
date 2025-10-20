@@ -13,8 +13,8 @@ A web checklist that captures key concepts, derivations, and equations from my a
 
 ## Getting Started
 
-1. Open `index.html` in any modern browser (Chrome, Firefox, Edge, Safari).
-2. Tick items as you complete them—progress is saved automatically on this device.
+1. Serve the folder with any static web server (for example `npx serve`, the VS Code Live Server extension, or `python -m http.server`).
+2. Visit `http://localhost:PORT/index.html` in a modern browser and work through the checklist—progress is saved automatically on this device.
 3. Use the **Reset All** button to clear the checklist when you want to start fresh.
 
 No build steps are required; the project is entirely static.
